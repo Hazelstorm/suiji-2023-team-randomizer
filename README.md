@@ -10,3 +10,6 @@ In a command terminal, make sure you're in the root directory of the project and
 > pipenv install
 > pipenv run python main.py
 ```
+
+# Algorithm Motivation and Implementation
+coming soon...
