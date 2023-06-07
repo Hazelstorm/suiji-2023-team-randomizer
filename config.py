@@ -13,3 +13,6 @@ NUM_ITERATIONS = 1000
 NUM_PLAYERS_PER_SUBTEAM = 2
 NUM_SUBTEAMS_PER_TEAM = 3
 NUM_TEAMS_PER_TOURNAMENT = 16
+
+# One of "osu", "taiko", "fruits", "mania"
+MODE = "taiko"

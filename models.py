@@ -5,6 +5,7 @@ from more_itertools import batched
 from statistics import variance, mean
 from tqdm import tqdm
 from typing import Callable, TypeVar
+from functools import cached_property
 
 import random
 
@@ -13,6 +14,7 @@ from config import (
     NUM_SUBTEAMS_PER_TEAM,
     NUM_TEAMS_PER_TOURNAMENT,
     NUM_ITERATIONS,
+    MODE,
 )
 
 T = TypeVar("T")
@@ -26,9 +28,14 @@ NUM_PLAYERS_PER_SEED = NUM_PLAYERS_PER_SUBTEAM * NUM_TEAMS_PER_TOURNAMENT
 class Player:
     user: UserCompact
 
-    @property
+    @cached_property
     def pp(self) -> float:
-        return self.user.statistics_rulesets.taiko.pp
+        user_stats = self.user.statistics_rulesets
+        try: 
+            pp = getattr(user_stats, MODE).pp
+        except AttributeError:
+            raise AttributeError(f"Player {self.user.username} has no pp for the mode {MODE}.")
+        return pp
 
     def __init__(self, user: UserCompact) -> None:
         self.user = user
@@ -155,7 +162,7 @@ class Tournament:
         self.balance_team_variance()
 
     def export_teams(self) -> None:
-        filename = f"teams-{time.strftime('%Y%m%d-%H%M%S')}.csv"
+        filename = f"teams-{time.strftime('%Y%m%d-%H%M%S')}-{MODE}.csv"
         with open(filename, "a", newline="") as f:
             writer = csv.DictWriter(f, ["team", "seed", "player", "pp"])
             writer.writeheader()
