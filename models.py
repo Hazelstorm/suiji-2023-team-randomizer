@@ -13,7 +13,6 @@ from config import (
     NUM_SUBTEAMS_PER_TEAM,
     NUM_TEAMS_PER_TOURNAMENT,
     NUM_ITERATIONS,
-    SEED,
 )
 
 T = TypeVar("T")
@@ -156,7 +155,8 @@ class Tournament:
         self.balance_team_variance()
 
     def export_teams(self) -> None:
-        with open(f"teams-{time.strftime('%Y%m%d-%H%M%S')}.csv", "a", newline="") as f:
+        filename = f"teams-{time.strftime('%Y%m%d-%H%M%S')}.csv"
+        with open(filename, "a", newline="") as f:
             writer = csv.DictWriter(f, ["team", "seed", "player", "pp"])
             writer.writeheader()
             for i, team in enumerate(self.teams):
@@ -170,6 +170,7 @@ class Tournament:
                                 "pp": player.pp,
                             }
                         )
+        print(f"Teams successfully exported to: {filename}")
 
 
 def minimize_metric(

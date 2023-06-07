@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
     # Load players
     # The osu!api returns up to 50 results at a time, so we need to batch our requests
+    print("Fetching users...")
     api = Ossapi(CLIENT_ID, CLIENT_SECRET)
     players = []
     for batch in batched(rows, 50):
