@@ -1,6 +1,8 @@
 import csv
 import random
-from config import api, SEED
+
+from ossapi import Ossapi
+from config import SEED, CLIENT_ID, CLIENT_SECRET
 from models import Tournament, Player
 from more_itertools import batched
 
@@ -14,6 +16,7 @@ if __name__ == "__main__":
 
     # Load players
     # The osu!api returns up to 50 results at a time, so we need to batch our requests
+    api = Ossapi(CLIENT_ID, CLIENT_SECRET)
     players = []
     for batch in batched(rows, 50):
         players += [Player(user) for user in api.users([row[0] for row in batch])]
