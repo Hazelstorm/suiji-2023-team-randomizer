@@ -14,6 +14,7 @@ from config import (
     NUM_SUBTEAMS_PER_TEAM,
     NUM_TEAMS_PER_TOURNAMENT,
     NUM_ITERATIONS,
+    SEARCH_DEPTH,
     MODE,
 )
 
@@ -32,9 +33,9 @@ class Player:
     def pp(self) -> float:
         user_stats = self.user.statistics_rulesets
         try: 
-            pp = getattr(user_stats, MODE).pp
+            pp = getattr(user_stats, MODE.value).pp
         except AttributeError:
-            raise AttributeError(f"Player {self.user.username} has no pp for the mode {MODE}.")
+            raise AttributeError(f"Player {self.user.username} has no pp for the mode {MODE.value}.")
         return pp
 
     def __init__(self, user: UserCompact) -> None:
@@ -94,10 +95,6 @@ class Seed:
             for subteam_players in batched(players, NUM_PLAYERS_PER_SUBTEAM)
         ]
 
-    def balance_subteam_pp(self) -> None:
-        print("Randomizing subteams...")
-        minimize_metric(self.subteams, swap_random_players, lambda: self.pp_variance)
-
 
 class Tournament:
     teams: list[Team]
@@ -112,9 +109,9 @@ class Tournament:
     def __init__(self, players: list[Player]) -> None:
         assert len(players) >= NUM_PLAYERS_PER_TOURNAMENT, (
             "Not enough players given for the current tournament parameters:\n"
-            + f"NUM_PLAYERS_PER_SUBTEAM={NUM_PLAYERS_PER_SUBTEAM}\n"
-            + f"NUM_SUBTEAMS_PER_TEAM={NUM_SUBTEAMS_PER_TEAM}\n"
-            + f"NUM_TEAMS_PER_TOURNAMENT={NUM_TEAMS_PER_TOURNAMENT}\n"
+            + f"{NUM_PLAYERS_PER_SUBTEAM=}\n"
+            + f"{NUM_SUBTEAMS_PER_TEAM=}\n"
+            + f"{NUM_TEAMS_PER_TOURNAMENT=}\n"
             + f"Total Player Count {NUM_PLAYERS_PER_TOURNAMENT}\n"
             + "More players can be added in player_ids.csv\n"
             + "These parameters can be changed in config.py"
@@ -147,8 +144,11 @@ class Tournament:
         ]
 
     def balance_seed_pp(self) -> None:
-        for seed in self.seeds.values():
-            seed.balance_subteam_pp()
+        for seed_tier, seed in self.seeds.items():
+            print("Randomizing subteams...")
+            minimize_metric(
+                seed.subteams, swap_random_players, lambda: seed.pp_variance
+            )
 
     def balance_team_variance(self) -> None:
         print("Randomizing teams...")
@@ -162,7 +162,7 @@ class Tournament:
         self.balance_team_variance()
 
     def export_teams(self) -> None:
-        filename = f"teams-{time.strftime('%Y%m%d-%H%M%S')}-{MODE}.csv"
+        filename = f"teams-{time.strftime('%Y%m%d-%H%M%S')}-{MODE.value}.csv"
         with open(filename, "a", newline="") as f:
             writer = csv.DictWriter(f, ["team", "seed", "player", "pp"])
             writer.writeheader()
@@ -185,17 +185,14 @@ def minimize_metric(
     swap_func: Callable[[T, T], Callable[[None], None]],
     metric_func: Callable[[], float],
 ) -> list[float]:
-    # Keep track of the metric over time so we can graph it later
-    metric_over_time = []
 
     for _ in tqdm(range(NUM_ITERATIONS)):
         old_metric = metric_func()
-        metric_over_time.append(old_metric)
 
         # Swap between 2 random objects in the list, 5 times
         # See examples of swap functions below
         reverts = []
-        for _ in range(5):
+        for _ in range(SEARCH_DEPTH):
             obj1, obj2 = random.sample(lst, 2)
             revert = swap_func(obj1, obj2)
             reverts.append(revert)
@@ -209,9 +206,6 @@ def minimize_metric(
         if metric_func() > old_metric:
             for revert in reverts[::-1]:
                 revert()
-    metric_over_time.append(metric_func())
-
-    return metric_over_time
 
 
 # Swaps a random player between 2 subteams,
