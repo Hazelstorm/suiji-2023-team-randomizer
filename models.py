@@ -27,15 +27,18 @@ NUM_PLAYERS_PER_SEED = NUM_PLAYERS_PER_SUBTEAM * NUM_TEAMS_PER_TOURNAMENT
 
 
 class Player:
-    user: UserCompact
+    # user: UserCompact
 
     @cached_property
     def pp(self) -> float:
-        user_stats = self.user.statistics_rulesets
-        try: 
-            pp = getattr(user_stats, MODE.value).pp
+        # user_stats = self.user.statistics_rulesets
+        try:
+            # pp = getattr(user_stats, MODE.value).pp
+
+            pp = self.user["pp"]
         except AttributeError:
-            raise AttributeError(f"Player {self.user.username} has no pp for the mode {MODE.value}.")
+            raise AttributeError(
+                f"Player {self.user.username} has no pp for the mode {MODE.value}.")
         return pp
 
     def __init__(self, user: UserCompact) -> None:
@@ -138,7 +141,8 @@ class Tournament:
 
         self.teams = [
             Team(
-                {seed_tier: seed.subteams[i] for seed_tier, seed in self.seeds.items()}
+                {seed_tier: seed.subteams[i]
+                    for seed_tier, seed in self.seeds.items()}
             )
             for i in range(NUM_TEAMS_PER_TOURNAMENT)
         ]
@@ -173,8 +177,8 @@ class Tournament:
                             {
                                 "team": i,
                                 "seed": seed_tier,
-                                "player": player.user.username,
-                                "pp": player.pp,
+                                "player": player.user["username"],
+                                "pp": player.user["pp"],
                             }
                         )
         print(f"Teams successfully exported to: {filename}")

@@ -20,8 +20,8 @@ SEARCH_DEPTH = 4
 
 # Tournament size
 NUM_PLAYERS_PER_SUBTEAM = 2
-NUM_SUBTEAMS_PER_TEAM = 3
-NUM_TEAMS_PER_TOURNAMENT = 16
+NUM_SUBTEAMS_PER_TEAM = 4
+NUM_TEAMS_PER_TOURNAMENT = 24
 
 # Which gamemode's pp value to use for balancing
 MODE = ossapi.GameMode.TAIKO
