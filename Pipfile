@@ -14,7 +14,6 @@ requests = "*"
 [dev-packages]
 
 [scripts]
-json = "py generate_players_json.py"
 main = "py main.py"
 
 [requires]
