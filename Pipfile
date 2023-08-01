@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 ossapi = "*"
-more-itertools = "*"
+more-itertools = "==9.1.0"
 tqdm = "*"
 pytz = "*"
 matplotlib = "*"
