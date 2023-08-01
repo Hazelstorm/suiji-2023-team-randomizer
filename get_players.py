@@ -25,7 +25,7 @@ def from_osu() -> list[Player]:
     return players
 
 
-def from_tsc_2023_sheet():
+def from_tsc_2023_sheet() -> list[Player]:
     SHEET_ID = "1cAMcCkwm_pxeTusb-Tddm1xXUpk7ZFu_I1DVtm7Qx5Y"
     SHEET_NAME = "Player List"
 
