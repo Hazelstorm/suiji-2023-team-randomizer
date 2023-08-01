@@ -30,12 +30,17 @@ def from_tsc_2023_sheet() -> list[Player]:
     SHEET_NAME = "Player List"
 
     url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={SHEET_NAME}"
+    response = requests.get(url)
 
-    # get sheet data and remove first row
-    data = requests.get(url).text.split("\n")[1:]
+    # Checks if the response was successful
+    response.raise_for_status()
 
-    players = [Player({"username": row[1], "pp": float(row[2])})
-               for row in filter(lambda row: row[1] and row[2] and row[3], csv.reader(data))]
+    eligible_players = filter(
+        lambda row: row[1] and row[2] and row[3],
+        csv.reader(response.text.split("\n")[1:])
+    )
+    players = [Player({"username": player[1], "pp": float(player[2])})
+               for player in eligible_players]
 
     return players
 
