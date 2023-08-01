@@ -1,5 +1,10 @@
 import ossapi
 
+# Whether the application should grab user profiles from player_ids.csv
+# via the osu! API or grab user data from google spreadsheets
+# By setting this to True you will also need to provide CLIENT_ID and CLIENT_SECRET below
+USE_OSU_API = False
+
 # To learn about getting a client id + secret, see:
 # https://circleguard.github.io/ossapi/creating-a-client.html
 CLIENT_ID = 0

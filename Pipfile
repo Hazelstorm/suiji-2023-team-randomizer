@@ -9,6 +9,7 @@ more-itertools = "==9.1.0"
 tqdm = "*"
 pytz = "*"
 matplotlib = "*"
+requests = "*"
 
 [dev-packages]
 
