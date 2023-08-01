@@ -14,7 +14,8 @@ requests = "*"
 [dev-packages]
 
 [scripts]
-main = "py main.py"
+main = "python main.py"
+lock = "python lock_players.py"
 
 [requires]
 python_version = "3"

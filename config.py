@@ -1,9 +1,10 @@
 import ossapi
 
-# Whether the application should grab user profiles from player_ids.csv
-# via the osu! API or grab user data from google spreadsheets
-# By setting this to True you will also need to provide CLIENT_ID and CLIENT_SECRET below
-USE_OSU_API = False
+# Specifies the source of player data
+# Accepted parameters are "TSC2023", "live" and "locked".
+# Setting this to "live" requires CLIENT_ID and CLIENT_SECRET to be valid.
+# Setting this to "locked" requires "pipenv run lock" to have been run at least once.
+PLAYER_DATA_SOURCE = "TSC2023"
 
 # To learn about getting a client id + secret, see:
 # https://circleguard.github.io/ossapi/creating-a-client.html

@@ -38,3 +38,14 @@ def from_tsc_2023_sheet():
                for row in filter(lambda row: row[1] and row[2] and row[3], csv.reader(data))]
 
     return players
+
+
+def from_locked() -> list[Player]:
+    try:
+        with open("players.json", "r") as file:
+            players = [Player(player) for player in json.load(file)]
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            "Locked players data file could not be found. Run \"pipenv run lock\" to lock the pp of all players in \"player_ids.csv\""
+        )
+    return players
