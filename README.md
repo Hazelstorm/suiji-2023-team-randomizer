@@ -6,9 +6,14 @@ Requirements: Python 3, pipenv
 
 ### Configuration Parameters
 
-Parameters such as the gamemode, number of teams in the tournament, and number of players per team can be set by editing `config.py`. Make sure that `CLIENT_ID` and `CLIENT_SECRET` are configured with an OAuth client, for which instructions to create one can be found at https://circleguard.github.io/ossapi/creating-a-client.html.
+Parameters such as the gamemode, number of teams in the tournament, and number of players per team can be set by editing `config.py`.
 
-Players will be loaded from the csv named `player_ids.csv`. This file comes premade with a list of ids of players from the first iteration of the _Taiko Suiji Cup_, but you can change it to contain whatever ids you wish.
+For tournaments other than TSC2023, follow the steps below:
+
+1. Players will be loaded from the csv named `player_ids.csv`. Fill this file with all eligible user ids in your tournament, each separated with a new line.
+2. Make sure that `CLIENT_ID` and `CLIENT_SECRET` are configured with an OAuth client, for which instructions to create one can be found at https://circleguard.github.io/ossapi/creating-a-client.html.
+3. Set `PLAYER_DATA_SOURCE` to `"live"`. This will make the script grab realtime player data.
+4. Typically when registrations end, the ranks are "locked" or "frozen", and in order to accomodate this you can run `pipenv run lock` to lock the pp values of each player. By doing this `PLAYER_DATA_SOURCE` should be set to `"locked"`.
 
 ### Running the Script
 
