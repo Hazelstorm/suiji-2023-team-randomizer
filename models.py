@@ -44,7 +44,7 @@ class Player:
                 pp = self.user["pp"]
             except KeyError:
                 raise KeyError(
-                    "Player object is invalid. Ensure that {'pp': float, 'username': str} objects are being passed in the constructor."
+                    "Player object is invalid. Ensure that {\"pp\": float, \"username\": str} objects are being passed in the constructor."
                 )
             return pp
 
@@ -57,14 +57,14 @@ class Player:
                 username = self.user["username"]
             except KeyError:
                 raise KeyError(
-                    "Player object is invalid. Ensure that {'pp': float, 'username': str} objects are being passed in the constructor."
+                    "Player object is invalid. Ensure that {\"pp\": float, \"username\": str} objects are being passed in the constructor."
                 )
             return username
 
     def __init__(self, user: UserCompact | dict[str, str | float]) -> None:
         if not isinstance(user, (UserCompact, dict)):
             raise TypeError(
-                "Parameter 'user' is not of type UserCompact or dict. Ensure that a UserCompact or a {'pp': float, 'username': str} are being passed")
+                "Parameter \"user\" is not of type UserCompact or dict. Ensure that a UserCompact or a {\"pp\": float, \"username\": str} are being passed")
         self.user = user
 
 
