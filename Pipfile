@@ -5,12 +5,17 @@ name = "pypi"
 
 [packages]
 ossapi = "*"
-more-itertools = "*"
+more-itertools = "==9.1.0"
 tqdm = "*"
 pytz = "*"
 matplotlib = "*"
+requests = "*"
 
 [dev-packages]
+
+[scripts]
+main = "python main.py"
+lock = "python lock_players.py"
 
 [requires]
 python_version = "3"

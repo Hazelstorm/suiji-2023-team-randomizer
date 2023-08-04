@@ -27,18 +27,44 @@ NUM_PLAYERS_PER_SEED = NUM_PLAYERS_PER_SUBTEAM * NUM_TEAMS_PER_TOURNAMENT
 
 
 class Player:
-    user: UserCompact
+    user: UserCompact | dict[str, str | float]
 
     @cached_property
     def pp(self) -> float:
-        user_stats = self.user.statistics_rulesets
-        try: 
-            pp = getattr(user_stats, MODE.value).pp
-        except AttributeError:
-            raise AttributeError(f"Player {self.user.username} has no pp for the mode {MODE.value}.")
-        return pp
+        if isinstance(self.user, UserCompact):
+            user_stats = self.user.statistics_rulesets
+            try:
+                pp = getattr(user_stats, MODE.value).pp
+            except AttributeError:
+                raise AttributeError(
+                    f"Player {self.username} has no pp for the mode {MODE.value}.")
+            return pp
+        elif isinstance(self.user, dict):
+            try:
+                pp = self.user["pp"]
+            except KeyError:
+                raise KeyError(
+                    "Player object is invalid. Ensure that {\"pp\": float, \"username\": str} objects are being passed in the constructor."
+                )
+            return pp
 
-    def __init__(self, user: UserCompact) -> None:
+    @cached_property
+    def username(self) -> str:
+        if isinstance(self.user, UserCompact):
+            return self.user.username
+        elif isinstance(self.user, dict):
+            try:
+                username = self.user["username"]
+            except KeyError:
+                raise KeyError(
+                    "Player object is invalid. Ensure that {\"pp\": float, \"username\": str} objects are being passed in the constructor."
+                )
+            return username
+
+    def __init__(self, user: UserCompact | dict[str, str | float]) -> None:
+        if not isinstance(user, (UserCompact, dict)):
+            raise TypeError(
+                "Parameter \"user\" is not of type UserCompact or dict. Ensure that a UserCompact or a {\"pp\": float, \"username\": str} are being passed")
         self.user = user
 
 
@@ -138,7 +164,8 @@ class Tournament:
 
         self.teams = [
             Team(
-                {seed_tier: seed.subteams[i] for seed_tier, seed in self.seeds.items()}
+                {seed_tier: seed.subteams[i]
+                    for seed_tier, seed in self.seeds.items()}
             )
             for i in range(NUM_TEAMS_PER_TOURNAMENT)
         ]
@@ -173,7 +200,7 @@ class Tournament:
                             {
                                 "team": i,
                                 "seed": seed_tier,
-                                "player": player.user.username,
+                                "player": player.username,
                                 "pp": player.pp,
                             }
                         )

@@ -1,27 +1,24 @@
-import csv
+import get_players
 import random
 
-from ossapi import Ossapi
-from config import SEED, CLIENT_ID, CLIENT_SECRET
-from models import Tournament, Player
-from more_itertools import batched
+from config import SEED, PLAYER_DATA_SOURCE
+from models import Tournament
 
 if __name__ == "__main__":
     random.seed(SEED)
 
-    # Load csv
-    with open("player_ids.csv") as file:
-        reader = csv.reader(file)
-        rows = [row for row in reader]
-
-    # Load players
-    # The osu!api returns up to 50 results at a time, so we need to batch our requests
     print("Fetching users...")
-    api = Ossapi(CLIENT_ID, CLIENT_SECRET)
-    players = []
-    for batch in batched(rows, 50):
-        players += [Player(user) for user in api.users([row[0] for row in batch])]
-    tournament = Tournament(players)
+    if PLAYER_DATA_SOURCE == "TSC2023":
+        players = get_players.from_tsc_2023_sheet()
+    elif PLAYER_DATA_SOURCE == "live":
+        players = get_players.from_osu()
+    elif PLAYER_DATA_SOURCE == "locked":
+        players = get_players.from_locked()
+    else:
+        raise ValueError(
+            f"PLAYER_DATA_SOURCE parameter is invalid. Received: \"{PLAYER_DATA_SOURCE}\". Expected: \"TSC2023\", \"live\" or \"locked\""
+        )
 
+    tournament = Tournament(players)
     tournament.balance_tournament()
     tournament.export_teams()
